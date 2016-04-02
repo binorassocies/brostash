@@ -4,7 +4,7 @@ BRO_URL="https://www.bro.org/downloads/release/bro-$BRO_VER.tar.gz"
 
 apt-get update
 apt-get -y upgrade
-apt-get -y install ntpdate iptables-persistent unattended-upgrades apt-listchanges nmap lsof munin-node rsync supervisor sysstat tcpdump tcpflow tcpreplay vim python-pip htop bwm-ng dsniff ethtool
+apt-get -y install ntpdate iptables-persistent unattended-upgrades nmap lsof rsync supervisor tcpdump vim python-pip
 
 apt-get -y install cmake make gcc gdb g++ flex bison libpcap-dev libssl-dev python-dev swig2.0 zlib1g-dev libcap-ng-dev libgeoip-dev
 
@@ -29,26 +29,6 @@ make install
 
 echo "export PATH=/opt/bro/bin:/opt/pfring/bin:/opt/pfring/sbin:\$PATH" >> /etc/profile
 
-echo "
-#! /bin/sh
-# /etc/init.d/bro
-
-case \"\$1\" in
-  start)
-        echo \"Starting script bro \"
-        /opt/bro/bin/broctl start
-        ;;
-  stop)
-        echo \"Stopping script bro\"
-        /opt/bro/bin/broctl stop
-        ;;
-  *)
-    echo \"Usage: /etc/init.d/bro {start|stop}\"
-    exit 1
-    ;;
-esac
-exit 0 " \ > /etc/init.d/bro
-chmod +x /etc/init.d/bro
 cd ..
 rm -Rf bro-$BRO_VER*
 
@@ -79,6 +59,8 @@ critical-stack-intel --debug api \$CS_INTEL_KEY
 /opt/bro/bin/broctl install
 /opt/bro/bin/broctl restart
 
+echo \"00 7/19 * * *  root sh /opt/utils/criticalstack_update >> /tmp/stack.out\" >> /etc/crontab
+
 " \ > /opt/utils/criticalstack_init
 
 echo "
@@ -92,9 +74,6 @@ echo \"#### Restarting bro ####\"
 /opt/bro/bin/broctl restart
 " \ > /opt/utils/criticalstack_update
 
-# critical stack update cron job
-echo "00 7/19 * * *  root sh /opt/utils/criticalstack_update >> /tmp/stack.out" >> /etc/crontab
-
 
 echo "
 
@@ -102,7 +81,6 @@ iptables -F
 iptables -A INPUT -i lo -j ACCEPT
 iptables -A INPUT -j ACCEPT -m state --state ESTABLISHED,RELATED
 iptables -A INPUT -p tcp -m multiport --dports 22,80,443,4949 -j ACCEPT
-iptables -A INPUT -j LOG --log-level 4 --log-prefix \"[iptables_denied: \"
 iptables -A INPUT -j DROP
 
 iptables -A OUTPUT -j ACCEPT
@@ -116,23 +94,6 @@ iptables-save > /etc/iptables/rules.v6
 
 " \ > /opt/utils/iptables_sample
 
-# NIC tunning
-
-echo "
-#!/bin/bash
-
-/sbin/ethtool -G \$IFACE rx 4096 >/dev/null 2>&1 ;
-for i in rx tx sg tso ufo gso gro lro rxvlan txvlan; do /sbin/ethtool -K \$IFACE \$i off >/dev/null 2>&1; done;
-
-/sbin/ethtool -N \$IFACE rx-flow-hash udp4 sdfn >/dev/null 2>&1;
-/sbin/ethtool -N \$IFACE rx-flow-hash udp6 sdfn >/dev/null 2>&1;
-/sbin/ethtool -C \$IFACE rx-usecs 1 rx-frames 0 >/dev/null 2>&1;
-/sbin/ethtool -C \$IFACE adaptive-rx off >/dev/null 2>&1;
-
-exit 0
-" \ >  /etc/network/if-up.d/interface-tuneup
-
-chmod +x /etc/network/if-up.d/interface-tuneup
 
 echo "                                                 
  _____ _____ _____ _____ _____ _____ _____ _____ 
