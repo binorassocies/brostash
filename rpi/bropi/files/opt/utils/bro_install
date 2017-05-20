@@ -1,0 +1,87 @@
+#!/bin/bash
+set -e
+set -x
+
+BRO_VER="2.5"
+BRO_URL="https://www.bro.org/downloads/bro-$BRO_VER.tar.gz"
+BRO_SIGN="https://www.bro.org/downloads/bro-$BRO_VER.tar.gz.asc"
+BRO_DIR="/opt/bro"
+
+install_bro(){
+  echo "Installing BRO IDS version $BRO_VER"
+  gpg --keyserver keys.gnupg.net --recv F8CB8019
+  mkdir -p $BRO_DIR
+  cd /tmp
+  wget $BRO_URL
+  wget $BRO_SIGN
+  gpg --verify bro-$BRO_VER.tar.gz.asc bro-$BRO_VER.tar.gz
+
+  tar -xvzf bro-$BRO_VER.tar.gz
+
+  cd bro-$BRO_VER
+  ./configure --prefix=$BRO_DIR
+  make
+  make install
+
+  echo "[Unit]
+Description=bro
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/opt/bro/bin/broctl start
+ExecStop=/opt/bro/bin/broctl stop
+Type=forking
+
+[Install]
+WantedBy=multi-user.target" > /etc/systemd/system/bro.service
+
+  chmod +x /etc/systemd/system/bro.service
+  systemctl enable bro
+
+  echo "0-59/5 * * * * root $BRO_DIR/bin/broctl cron" >> /etc/crontab
+
+}
+
+system_tuning(){
+  echo "Setting some system tunning: nic offloading, kernel"
+  echo '#!/bin/bash
+/sbin/ethtool -G $IFACE rx 4096 >/dev/null 2>&1;
+for i in rx tx sg tso ufo gso gro lro rxvlan txvlan; do /sbin/ethtool -K $IFACE $i off >/dev/null 2>&1; done;
+/sbin/ethtool -N $IFACE rx-flow-hash udp4 sdfn >/dev/null 2>&1;
+/sbin/ethtool -N $IFACE rx-flow-hash udp6 sdfn >/dev/null 2>&1;
+/sbin/ethtool -C $IFACE rx-usecs 1 rx-frames 0 >/dev/null 2>&1;
+/sbin/ethtool -C $IFACE adaptive-rx off >/dev/null 2>&1;
+exit 0' > /etc/network/if-up.d/interface-tuneup
+  chmod +x /etc/network/if-up.d/interface-tuneup
+
+  echo 'Tuning script was install at /etc/network/if-up.d/interface-tuneup'
+  echo 'Add the following line to the iface config:'
+  echo 'post-up /etc/network/if-up.d/interface-tuneup'
+
+  echo 'net.core.netdev_max_backlog=25000' > /etc/sysctl.d/11-kernel-tuning.conf
+  /sbin/sysctl -p
+
+}
+
+setup_iptables(){
+  echo "Configure iptables: allow inbound 22/80/443"
+  iptables -F
+  iptables -A INPUT -i lo -j ACCEPT
+  iptables -A INPUT -j ACCEPT -m state --state ESTABLISHED,RELATED
+  iptables -A INPUT -p tcp -m multiport --dports 22,80,443 -j ACCEPT
+  iptables -A INPUT -j DROP
+
+  iptables -A OUTPUT -j ACCEPT
+
+  iptables -A FORWARD -j DROP
+
+  iptables -L -v -n
+
+  iptables-save > /etc/iptables/rules.v4
+  iptables-save > /etc/iptables/rules.v6
+}
+
+install_bro
+system_tuning
+setup_iptables
