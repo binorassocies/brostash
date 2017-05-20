@@ -1,4 +1,4 @@
-#Brostash = script to build an image for the raspberry pi
+# Brostash for the pi: script to build an image for the raspberry pi
 
 * Run `rpi_01_prepare.sh` to download the raspbian lite image. To increase the size of the image, run `IMAGE_SIZE=1 sh rpi_01_prepare.sh` to add 1Gb.
 
