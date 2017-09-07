@@ -1,4 +1,4 @@
-#ELK Utils
+# ELK Utils
 
 A collection of script and configurations for an ELK stack setup with Bro IDS logs as an input. The repository have the following structure:
 
