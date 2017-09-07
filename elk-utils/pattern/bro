@@ -1,0 +1,20 @@
+### Bro
+LOG_HEADER %{BASE16FLOAT:bro_ts}\t(-|%{DATA:cuid})\t(-|%{IP:src_ip})\t(-|%{INT:src_port})\t(-|%{IP:dst_ip})\t(-|%{INT:dst_port})\t%{GREEDYDATA:bro_message}
+
+CONN (-|%{DATA:proto})\t(-|%{DATA:service})\t(-|%{BASE16FLOAT:conn_duration})\t(-|%{INT:bytes_sent})\t(-|%{INT:bytes_received})\t(-|%{DATA:conn_state})\t(-|%{DATA:local_orig})\t(-|%{DATA:local_resp})\t(-|%{INT:missing_bytes})\t(-|%{DATA:conn_history})\t(-|%{INT:orig_pkts})\t(-|%{INT:orig_ip_bytes})\t(-|%{INT:resp_pkts})\t(-|%{INT:resp_ip_bytes})\t%{GREEDYDATA:tunnel_parents}
+
+HTTP %{INT:transport_depth}\t(-|%{DATA:http_method})\t(-|%{DATA:domain})\t(-|%{DATA:http_uri})\t(-|%{DATA:referer})\t(-|%{DATA:http_version})\t(-|%{DATA:user_agent})\t(-|%{INT:bytes_sent})\t(-|%{INT:bytes_received})\t(-|%{INT:http_resp_code})\t(-|%{DATA:http_resp_msg})\t(-|%{INT:http_info_code})\t(-|%{DATA:http_info_msg})\t(-|%{DATA:http_tags})\t(-|%{DATA:username})\t(-|%{DATA:http_pwd})\t(-|%{DATA:http_proxied})\t(-|%{DATA:sent_fuids})\t(-|%{DATA:sent_file_name})\t(-|%{DATA:sent_mime_types})\t(-|%{DATA:resp_fuids})\t(-|%{DATA:resp_file_name})\t(-|%{GREEDYDATA:resp_mime_types})
+
+DNS %{DATA:proto}\t(-|%{DATA:dns_trans_id})\t(-|%{BASE16FLOAT:conn_duration})\t%{DATA:domain}\t(-|%{INT:dns_qclass})\t%{DATA:query_class}\t(-|%{INT:dns_qtype})\t%{DATA:dns_query_type}\t(-|%{INT:dns_rcode})\t%{DATA:dns_resp_code}\t%{DATA:dns_aa}\t%{DATA:dns_tc}\t%{DATA:dns_rd}\t%{DATA:dns_ra}\t%{DATA:dns_z}\t(-|%{DATA:dns_answers})\t(-|%{DATA:dns_answers_ttls})\t%{GREEDYDATA:dns_rejected}
+
+SSL (-|%{DATA:ssl_version})\t(-|%{DATA:cipher})\t(-|%{DATA:curve})\t(-|%{DATA:domain})\t(-|%{DATA:ssl_resumed})\t(-|%{DATA:ssl_last_alert})\t(-|%{DATA:ssl_next_protocol})\t(-|%{DATA:ssl_established})\t(-|%{DATA:cert_chain_fuid})\t(-|%{DATA:client_cert_chain_fuid})\t(-|%{DATA:cert_subject})\t(-|%{DATA:cert_issuer})\t(-|%{DATA:client_cert_subject})\t(-|%{DATA:client_cert_issuer})\t%{GREEDYDATA:cert_validation_status}
+
+FTP (-|%{DATA:username})\t(-|%{DATA:ftp_pwd})\t(-|%{DATA:ftp_command})\t(-|%{DATA:ftp_arg})\t(-|%{DATA:mime_type})\t(-|%{INT:file_size})\t(-|%{INT:ftp_response_code})\t(-|%{DATA:ftp_response_msg})\t(-|%{DATA:ftp_passive})\t(-|%{DATA:ftp_data_src})\t(-|%{DATA:ftp_data_dst})\t(-|%{DATA:ftp_data_port})\t(-|%{GREEDYDATA:fuid})
+
+SSH (-|%{INT:ssh_version})\t(-|%{DATA:ssh_auth_success})\t(-|%{INT:ssh_auth_attempts})\t(-|%{DATA:ssh_direction})\t(-|%{DATA:ssh_client})\t(-|%{DATA:ssh_server})\t(-|%{DATA:cipher})\t(-|%{DATA:ssh_mac})\t(-|%{DATA:ssh_compression})\t(-|%{DATA:ssh_kex})\t(-|%{DATA:ssh_host_key_alg})\t(-|%{GREEDYDATA:ssh_host_key})
+
+NOTICE (-|%{DATA:fuid})\t(-|%{DATA:mime_type})\t(-|%{DATA:file_desc})\t(-|%{DATA:proto})\t(-|%{DATA:bro_notice_type})\t(-|%{DATA:bro_notice_msg})\t(-|%{DATA:bro_notice_desc})\t(-|%{IP:n_src_ip})\t(-|%{IP:n_dst_ip})\t(-|%{INT:n_dst_port})\t%{GREEDYDATA}
+
+FILES %{BASE16FLOAT:bro_ts}\t%{DATA:fuid}\t(-|%{DATA:file_src_ip})\t(-|%{DATA:file_dst_ip})\t(-|%{DATA:cuid})\t(-|%{DATA:file_source})\t(-|%{INT:file_depth})\t(-|%{DATA:file_analyzers})\t(-|%{DATA:mime_type})\t(-|%{DATA:file_name})\t(-|%{BASE16FLOAT:file_analysis_duration})\t(-|%{DATA:local_orig})\t(-|%{DATA:is_orig})\t(-|%{INT:seen_bytes})\t(-|%{INT:total_bytes})\t(-|%{INT:missing_bytes})\t(-|%{INT:overflow_bytes})\t(-|%{DATA:timedout})\t(-|%{DATA:parent_fuid})\t(-|%{DATA:md5})\t(-|%{DATA:sha1})\t(-|%{DATA:sha256})\t%{GREEDYDATA}
+
+X509 %{BASE16FLOAT:bro_ts}\t%{DATA:fuid}\t(-|%{INT:x509_version})\t%{BASE16NUM:x509_serial}\t%{DATA:cert_subject}\t%{DATA:cert_issuer}\t%{DATA:cert_start_ts}\t%{DATA:cert_end_ts}\t(-|%{DATA:cert_key_alg})\t(-|%{DATA:cert_sig_alg})\t(-|%{DATA:cert_key_type})\t(-|%{INT:cert_key_len})\t(-|%{INT:key_exp})\t(-|%{DATA:cert_key_curve})\t(-|%{DATA:cert_san_dns})\t(-|%{DATA:cert_san_uri})\t(-|%{DATA:cert_san_email})\t(-|%{DATA:cert_san_ip})\t(-|%{DATA:cert_basic_constraints_ca})\t(-|%{GREEDYDATA:cert_basic_constraints_pathlen})
