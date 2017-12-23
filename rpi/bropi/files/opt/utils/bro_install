@@ -2,7 +2,7 @@
 set -e
 set -x
 
-BRO_VER="2.5"
+BRO_VER="2.5.2"
 BRO_URL="https://www.bro.org/downloads/bro-$BRO_VER.tar.gz"
 BRO_SIGN="https://www.bro.org/downloads/bro-$BRO_VER.tar.gz.asc"
 BRO_DIR="/opt/bro"
@@ -40,6 +40,7 @@ WantedBy=multi-user.target" > /etc/systemd/system/bro.service
   systemctl enable bro
 
   echo "0-59/5 * * * * root $BRO_DIR/bin/broctl cron" >> /etc/crontab
+  echo "redef ignore_checksums = T;" >> $BRO_DIR/share/bro/site/local.bro
 
 }
 

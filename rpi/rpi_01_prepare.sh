@@ -39,10 +39,12 @@ then
   if [ $SIZE -gt 0 ]
   then
     NEW_SIZE=$(($SIZE * 1024))
-    OFFSET_BOOT_SIZE=`/sbin/fdisk -lu ${IMAGE_FILE}  | tail -n 3 | head -n 1 | awk '{ print $2 }'`
-    OFFSET_ROOTFS_SIZE=`/sbin/fdisk -lu ${IMAGE_FILE} | tail -n 2 | head -n 1 | awk '{ print $2 }'`
+    OFFSET_BOOT_SIZE=`/sbin/fdisk -lu ${IMAGE_FILE}  | tail -n 2 | head -n 1 | awk '{ print $2 }'`
+    OFFSET_ROOTFS_SIZE=`/sbin/fdisk -lu ${IMAGE_FILE} | tail -n 1 | head -n 1 | awk '{ print $2 }'`
     OFFSET_BOOT=$(($OFFSET_BOOT_SIZE * 512))
     OFFSET_ROOTFS=$(($OFFSET_ROOTFS_SIZE * 512))
+
+
     echo "Resizing the image"
     dd if=/dev/zero bs=1024k count=$NEW_SIZE >> $IMAGE_FILE
     dev_loop_0=`/sbin/losetup -f --show ${IMAGE_FILE}`

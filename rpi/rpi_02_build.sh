@@ -34,12 +34,17 @@ init_chroot(){
 }
 
 mount_image(){
-  OFFSET_BOOT_SIZE=`/sbin/fdisk -lu ${IMAGE_FILE}  | tail -n 3 | head -n 1 | awk '{ print $2 }'`
-  OFFSET_ROOTFS_SIZE=`/sbin/fdisk -lu ${IMAGE_FILE} | tail -n 2 | head -n 1 | awk '{ print $2 }'`
+  OFFSET_BOOT_SIZE=`/sbin/fdisk -lu ${IMAGE_FILE}  | tail -n 2 | head -n 1 | awk '{ print $2 }'`
+  OFFSET_ROOTFS_SIZE=`/sbin/fdisk -lu ${IMAGE_FILE} | tail -n 1 | head -n 1 | awk '{ print $2 }'`
   OFFSET_BOOT=$(($OFFSET_BOOT_SIZE * 512))
   OFFSET_ROOTFS=$(($OFFSET_ROOTFS_SIZE * 512))
-  mount -o loop,offset=${OFFSET_ROOTFS} ${IMAGE_FILE} ${CHROOT_DIR}
-  mount -o loop,offset=${OFFSET_BOOT} ${IMAGE_FILE} ${CHROOT_DIR}/boot
+  LIMIT_BOOT_SIZE=`/sbin/fdisk -lu ${IMAGE_FILE}  | tail -n 2 | head -n 1 | awk '{ print $4 }'`
+  LIMIT_ROOTFS_SIZE=`/sbin/fdisk -lu ${IMAGE_FILE} | tail -n 1 | head -n 1 | awk '{ print $4 }'`
+  SIZELIMIT_BOOT=$(($LIMIT_BOOT_SIZE * 512))
+  SIZELIMIT_ROOTFS=$(($LIMIT_ROOTFS_SIZE * 512))
+
+  mount -o loop,offset=${OFFSET_ROOTFS},sizelimit=${SIZELIMIT_ROOTFS} ${IMAGE_FILE} ${CHROOT_DIR}
+  mount -o loop,offset=${OFFSET_BOOT},sizelimit=${SIZELIMIT_BOOT} ${IMAGE_FILE} ${CHROOT_DIR}/boot
 }
 
 clean_up(){
@@ -60,7 +65,6 @@ clean_up(){
 }
 trap clean_up EXIT TERM INT
 
-#export QEMU_CPU=cortex-a15
 export QEMU_CPU=arm1176
 
 set -x

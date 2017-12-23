@@ -16,7 +16,7 @@ LOGSTASH_REPO="deb https://artifacts.elastic.co/packages/5.x/apt stable main"
 PF_RING_VER="6.6.0"
 PF_RING_URL="https://github.com/ntop/PF_RING/archive/$PF_RING_VER.tar.gz"
 
-BRO_VER="2.5"
+BRO_VER="2.5.2"
 BRO_URL="https://www.bro.org/downloads/bro-$BRO_VER.tar.gz"
 
 echo "Install Dependency"
@@ -175,6 +175,7 @@ echo \"
 
 # bro cleanup cron job
 echo \\\"0-59/5 * * * * root /opt/bro/bin/broctl cron\\\" >> /etc/crontab
+echo \\\"redef ignore_checksums = T;\\\" >> /opt/bro/share/bro/site/local.bro
 
 iptables -F
 iptables -A INPUT -i lo -j ACCEPT
