@@ -21,8 +21,13 @@
       "_all" : { "enabled" : false },
       "properties" : {
         "message" : { "type" : "text", "analyzer": "simple", "norms": false },
+        "message_raw" : { "type" : "text", "norms": false , "index": false },
+        "domain" : {"type" : "text", "fields" : { "raw" : {"type" : "keyword"}}},
         "src_ip" : { "type" : "ip" },
-        "dst_ip" : { "type" : "ip" }
+        "dst_ip" : { "type" : "ip" },
+        "ips" : { "type" : "ip" },
+        "src_location" : { "type": "geo_point"},
+        "dst_location" : { "type": "geo_point"}
       }
     }
   },

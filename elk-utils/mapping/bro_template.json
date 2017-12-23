@@ -4,16 +4,8 @@
   "mappings" : {
     "_default_" : {
       "properties" : {
-        "message" : { "type" : "text", "analyzer": "simple", "norms": false },
-        "src_ip" : { "type" : "ip" },
-        "dst_ip" : { "type" : "ip" },
-        "message_raw" : { "type" : "text", "norms": false , "index": false },
-        "ips" : { "type" : "ip" },
         "conn_duration" : { "type" : "double"},
         "file_analysis_duration" : { "type" : "double"},
-        "src_location" : { "type": "geo_point"},
-        "dst_location" : { "type": "geo_point"},
-        "domain" : {"type" : "text", "fields" : { "raw" : {"type" : "keyword"}}},
         "ref_domain" : {"type" : "text", "fields" : {"raw" : {"type" : "keyword"}}},
         "domain_ips" : { "type" : "ip" }
       }
