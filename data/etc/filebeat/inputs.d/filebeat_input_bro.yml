@@ -1,0 +1,89 @@
+- type: log
+  paths:
+    - /opt/bro/logs/current/conn.log
+  fields:
+    logtype: broconn
+    type: bro
+  fields_under_root: true
+  exclude_lines: ['^#']
+
+- type: log
+  paths:
+    - /opt/bro/logs/current/dns.log
+  fields:
+    logtype: brodns
+    type: bro
+  fields_under_root: true
+  exclude_lines: ['^#']
+
+- type: log
+  paths:
+    - /opt/bro/logs/current/http.log
+  fields:
+    logtype: brohttp
+    type: bro
+  fields_under_root: true
+  exclude_lines: ['^#']
+
+- type: log
+  paths:
+    - /opt/bro/logs/current/files.log
+  fields:
+    logtype: brofiles
+    type: bro
+  fields_under_root: true
+  exclude_lines: ['^#']
+
+- type: log
+  paths:
+    - /opt/bro/logs/current/ftp.log
+  fields:
+    logtype: broftp
+    type: bro
+  fields_under_root: true
+  exclude_lines: ['^#']
+
+- type: log
+  paths:
+    - /opt/bro/logs/current/notice.log
+  fields:
+    logtype: bronotice
+    type: bro
+  fields_under_root: true
+  exclude_lines: ['^#']
+
+- type: log
+  paths:
+    - /opt/bro/logs/current/ssl.log
+  fields:
+    logtype: brossl
+    type: bro
+  fields_under_root: true
+  exclude_lines: ['^#']
+
+- type: log
+  paths:
+    - /opt/bro/logs/current/ssh.log
+  fields:
+    logtype: brossh
+    type: bro
+  fields_under_root: true
+  exclude_lines: ['^#']
+
+- type: log
+  paths:
+    - /opt/bro/logs/current/x509.log
+  fields:
+    logtype: brox509
+    type: bro
+  fields_under_root: true
+  exclude_lines: ['^#']
+
+- type: log
+  paths:
+    - /opt/bro/logs/current/software.log
+  fields:
+    logtype: brosoftware
+    type: bro
+  fields_under_root: true
+  exclude_lines: ['^#']

@@ -1,0 +1,13 @@
+#!/bin/bash
+# To deploy:
+# cp /opt/utils/iptables /etc/network/if-up.d/
+# chmod +x /etc/network/if-up.d/iptables
+
+iptables -F
+iptables -X
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A INPUT -j ACCEPT -m state --state ESTABLISHED,RELATED
+iptables -A INPUT -p tcp -m multiport --dports 22,80,443 -j ACCEPT
+iptables -A INPUT -j DROP
+iptables -A OUTPUT -j ACCEPT
+iptables -A FORWARD -j DROP

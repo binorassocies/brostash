@@ -1,0 +1,7 @@
+Collection of Script to Tune/Lock down the bro sensor.
+# IPTABLES:
+The script iptables configures the host firewall to allow only inbound ssh/http(s) connections.
+This enough if the bro service is not connected to another host as part of a bro cluster.
+
+# NIC Tunning:
+The script interface-tuneup disables NIC offloading.  

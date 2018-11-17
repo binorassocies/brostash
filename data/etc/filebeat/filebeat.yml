@@ -1,0 +1,17 @@
+filebeat.config:
+  inputs:
+    enabled: true
+    path: inputs.d/*.yml
+
+name: brostash
+tags: ["bro_sensor"]
+
+# Enable the logstash output with the correct IP/PORT for the beat listener.
+#output.logstash:
+#  hosts: ["X.X.X.X:5044"]
+
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
