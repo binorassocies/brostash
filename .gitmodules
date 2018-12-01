@@ -1,3 +1,6 @@
 [submodule "pipeline"]
 	path = pipeline
 	url = https://github.com/binorassocies/brostash-pipeline
+[submodule "devops"]
+	path = devops
+	url = https://github.com/binorassocies/brostash-devops
