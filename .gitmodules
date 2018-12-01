@@ -1,6 +1,6 @@
 [submodule "pipeline"]
 	path = pipeline
-	url = git@bihas-github:binorassocies/brostash-pipeline.git
+	url = https://github.com/binorassocies/brostash-pipeline
 [submodule "devops"]
 	path = devops
-	url = git@bihas-github:binorassocies/brostash-devops.git
+	url = https://github.com/binorassocies/brostash-devops
