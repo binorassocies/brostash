@@ -8,7 +8,7 @@ fi
 
 set -e
 
-VERSION="0.3"
+VERSION="0.4"
 IMAGE_NAME="BroStash"
 PERPARER="Binor"
 PUBLISHER="Binor"
@@ -53,7 +53,7 @@ cp data/etc/filebeat/filebeat.yml $IMAGE_NAME-Live-Build/config/includes.chroot/
 cp data/etc/filebeat/inputs.d/filebeat_input_bro.yml $IMAGE_NAME-Live-Build/config/includes.chroot/etc/filebeat/inputs.d/
 
 echo "autoconf automake build-essential debian-installer-launcher live-build \
-  apt-transport-https ca-certificates dirmngr gnupg openssh-server" \
+  apt-transport-https ca-certificates dirmngr gnupg openssh-server sudo" \
   >> $IMAGE_NAME-Live-Build/config/package-lists/Brostash-CoreSystem.list.chroot
 
 echo "linux-headers-amd64 linux-image-amd64 gcc make flex bison curl \
@@ -67,9 +67,8 @@ echo "ntp nmap lsof rsync sysstat vim htop bwm-ng dsniff ethtool openssl" \
 cp data/chroot/brostash-inside-chroot.sh \
   $IMAGE_NAME-Live-Build/config/hooks/live/brostash-inside-chroot.hook.chroot
 
-#sed -i -e 's|menu label \^Live|menu label \^BroStash Live|' $IMAGE_NAME-Live-Build/binary/isolinux/live.cfg
-#sed -i -e 's|menu label \^Install|menu label \^BroStash Install|' $IMAGE_NAME-Live-Build/binary/isolinux/install.cfg
-#sed -i -e 's|menu label \^Graphical install|menu label \^BroStash Graphical install|' $IMAGE_NAME-Live-Build/binary/isolinux/install.cfg
+cp data/chroot/menues-changes.binary \
+  $IMAGE_NAME-Live-Build//config/hooks/live/menues-changes.hook.binary
 
 cp data/chroot/preseed.cfg \
   $IMAGE_NAME-Live-Build/config/includes.installer/preseed.cfg

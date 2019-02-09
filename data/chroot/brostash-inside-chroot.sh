@@ -62,7 +62,7 @@ rm -Rf $PF_RING_VER.tar.gz
 
 # Install bro
 
-BRO_VER="2.5.5"
+BRO_VER="2.6.1"
 BRO_URL="https://www.bro.org/downloads/bro-$BRO_VER.tar.gz"
 
 mkdir -p /opt/bro
@@ -92,7 +92,7 @@ chmod +x /etc/systemd/system/bro.service
 cd ..
 rm -Rf bro-$BRO_VER*
 
-echo "0-59/5 * * * * root /opt/bro/bin/broctl cron" >> /etc/crontab
+echo "#0-59/5 * * * * root /opt/bro/bin/broctl cron" >> /etc/crontab
 echo "redef ignore_checksums = T;" >> /opt/bro/share/bro/site/local.bro
 
 echo "brostash" > /etc/hostname
