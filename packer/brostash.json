@@ -1,0 +1,112 @@
+{
+  "_comment": "Build with `packer build --force brostash.json`",
+  "variables": {
+    "mirror": "http://cdimage.debian.org/debian-cd/current",
+    "mirror_directory": "amd64/iso-cd",
+    "iso_name": "debian-10.1.0-amd64-netinst.iso",
+    "preseed_path": "preseed_minimal.cfg",
+    "disk_size": "20480",
+    "memory": "2048",
+    "cpus": "2",
+    "iso_checksum": "23237b0a100a860b3dc7ffcfb5baae4bed5460ac5f3f2b929df3154f3319b9809055b695264586f60289cc6cb25077c12938cc612fee01756bfa779c87d5a315",
+    "iso_checksum_type": "sha512",
+    "headless": "true",
+    "virtualbox_guest_os_type": "Debian_64",
+    "root_password": "toor",
+    "ssh_user": "toor",
+    "ssh_password": "toor",
+    "system_hostname": "bb",
+    "ssh_port_forward": "24242",
+    "vm_name": "bb"
+  },
+  "builders": [
+    {
+      "type": "virtualbox-iso",
+      "boot_command": [
+        "<esc><wait>",
+        "install <wait>",
+        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{user `preseed_path`}} <wait>",
+        "debian-installer=en_US.UTF-8 <wait>",
+        "auto <wait>",
+        "locale=en_US.UTF-8 <wait>",
+        "kbd-chooser/method=us <wait>",
+        "keyboard-configuration/xkb-keymap=us <wait>",
+        "netcfg/choose_interface=auto <wait>",
+        "netcfg/get_hostname={{ .Name }} <wait>",
+        "netcfg/get_domain=dom.local <wait>",
+        "fb=false <wait>",
+        "debconf/frontend=noninteractive <wait>",
+        "console-setup/ask_detect=false <wait>",
+        "console-keymaps-at/keymap=us <wait>",
+        "grub-installer/bootdev=/dev/sda <wait>",
+        "<enter><wait>"
+      ],
+      "boot_wait": "10s",
+
+      "disk_size": "{{user `disk_size`}}",
+      "guest_os_type": "{{user `virtualbox_guest_os_type`}}",
+      "headless": "{{user `headless`}}",
+      "http_directory": "http",
+      "output_directory": "build/debian-9.x-{{user `vm_name`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_url": "{{user `mirror`}}/{{user `mirror_directory`}}/{{user `iso_name`}}",
+      "ssh_username": "{{user `ssh_user`}}",
+      "ssh_password": "{{user `ssh_password`}}",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--memory", "{{user `memory`}}" ],
+        [ "modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}" ],
+        [ "modifyvm", "{{.Name}}", "--vrde", "off" ],
+        [ "modifyvm", "{{.Name}}", "--audio", "none" ],
+        [ "modifyvm", "{{.Name}}", "--natpf1", "guest_ssh,tcp,127.0.0.1,{{user `ssh_port_forward`}},,22" ],
+        [ "modifyvm", "{{.Name}}", "--vram", "12"]
+      ],
+      "shutdown_command": "echo 'packer' | sudo -S /sbin/shutdown -hP now",
+      "virtualbox_version_file": ".vbox_version",
+      "vm_name": "{{user `vm_name`}}",
+      "guest_additions_mode": "disable"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "echo '{{user `ssh_user`}} ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/99_{{user `ssh_user`}}",
+        "chmod 440 /etc/sudoers.d/99_{{user `ssh_user`}}",
+        "apt-get update"
+      ],
+      "execute_command": "echo '{{ user `ssh_password` }}' | {{.Vars}} sudo -S -E '{{.Path}}'"
+    },
+    {
+      "type": "file",
+      "source": "../data",
+      "destination": "/home/{{user `ssh_user`}}"
+    },
+    {
+      "type": "file",
+      "source": "../brostash_build.sh",
+      "destination": "/home/{{user `ssh_user`}}/"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sh brostash_build.sh"
+      ],
+      "execute_command": "echo '{{ user `ssh_password` }}' | {{.Vars}} sudo -S -E '{{.Path}}'"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "apt-get -y autoremove",
+        "apt-get -y clean",
+        "rm -f /var/log/*.log",
+        "rm -Rf /home/packer/.ansible",
+        "rm -Rf /tmp/*",
+        "sync"
+      ],
+      "execute_command": "echo '{{ user `ssh_password` }}' | {{.Vars}} sudo -S -E '{{.Path}}'"
+    }
+  ]
+}
