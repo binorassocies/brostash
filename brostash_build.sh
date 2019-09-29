@@ -8,7 +8,7 @@ fi
 
 set -e
 
-VERSION="0.4"
+VERSION="0.4.1"
 IMAGE_NAME="BroStash"
 PERPARER="Binor"
 PUBLISHER="Binor"
@@ -16,22 +16,23 @@ PUBLISHER="Binor"
 echo "Install Build Dependency"
 apt-get update
 apt-get -y upgrade
-apt-get -y install xorriso live-build syslinux squashfs-tools python-docutils
+apt-get -y install xorriso debootstrap live-build syslinux squashfs-tools python-docutils
 mkdir -p $IMAGE_NAME-Live-Build
 
+export PATH=$PATH:/usr/sbin
 cd $IMAGE_NAME-Live-Build
 
 lb config \
--a amd64 -d stretch \
+-a amd64 -d buster \
 --swap-file-size 2048 \
 --chroot-filesystem squashfs \
---archive-areas "main contrib" \
+--archive-areas "main" \
 --bootloader syslinux \
 --debian-installer live \
 --bootappend-live "boot=live swap config username=brostash \
   live-config.user-default-groups=audio,cdrom,floppy,video,dip,plugdev,scanner,\
   bluetooth,netdev,sudo" \
---iso-application Bro PF_RING Packetbeat Filebeat \
+--iso-application Bro PF_RING Filebeat \
 --iso-preparer $PERPARER \
 --iso-publisher $PUBLISHER \
 --iso-volume BrosStash $LB_CONFIG_OPTIONS
@@ -57,7 +58,7 @@ echo "autoconf automake build-essential debian-installer-launcher live-build \
   >> $IMAGE_NAME-Live-Build/config/package-lists/Brostash-CoreSystem.list.chroot
 
 echo "linux-headers-amd64 linux-image-amd64 gcc make flex bison curl \
-  libssl1.0-dev zlib1g-dev swig libjemalloc-dev cmake libgoogle-perftools-dev \
+  libssl-dev zlib1g-dev swig libjemalloc-dev cmake libgoogle-perftools-dev \
   python-dev libpcap-dev g++" \
   >> $IMAGE_NAME-Live-Build/config/package-lists/Brostash-Bro.list.chroot
 
@@ -68,7 +69,7 @@ cp data/chroot/brostash-inside-chroot.sh \
   $IMAGE_NAME-Live-Build/config/hooks/live/brostash-inside-chroot.hook.chroot
 
 cp data/chroot/menues-changes.binary \
-  $IMAGE_NAME-Live-Build//config/hooks/live/menues-changes.hook.binary
+  $IMAGE_NAME-Live-Build/config/hooks/live/menues-changes.hook.binary
 
 cp data/chroot/preseed.cfg \
   $IMAGE_NAME-Live-Build/config/includes.installer/preseed.cfg
