@@ -4,4 +4,10 @@ The script iptables configures the host firewall to allow only inbound ssh/http(
 This enough if the bro service is not connected to another host as part of a bro cluster.
 
 # NIC Tunning:
-The script interface-tuneup disables NIC offloading.  
+The script interface-tuneup disables NIC offloading.
+
+# Promiscous mode
+#auto eth0
+#iface eth0 inet manual
+#        up ifconfig eth0 promisc up
+#        down ifconfig eth0 promisc down
